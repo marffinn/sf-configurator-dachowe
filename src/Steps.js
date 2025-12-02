@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Box, Button, Typography, FormControl, InputLabel, Select, MenuItem,
-  Slider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
+  Slider, Table, TableBody, TableCell, TableContainer, TableRow, Paper,
   Alert, Switch, FormControlLabel, useMediaQuery
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
