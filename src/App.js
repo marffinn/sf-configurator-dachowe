@@ -19,29 +19,36 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 const getTheme = (mode) => createTheme({
   palette: {
     mode,
-    primary: { main: '#1976d2' },
-    secondary: { main: '#d32f2f' },
-    background: {
-      default: mode === 'light' ? '#f0f2f5' : '#121212',
-      paper: mode === 'light' ? '#ffffff' : '#1e1e1e',
-    },
-    text: {
-      primary: mode === 'light' ? '#333333' : '#ffffff',
-      secondary: mode === 'light' ? '#555555' : '#aaaaaa',
-    }
+    ...(mode === 'light' ? {
+      primary: { main: '#dd0000' },
+      background: { default: '#f5f5f5', paper: '#ffffff' },
+      text: { primary: '#333333', secondary: '#555555' },
+    } : {
+      primary: { main: '#ff6b6b' },
+      background: { default: '#121212', paper: '#1e1e1e' },
+      text: { primary: '#ffffff', secondary: '#bbbbbb' },
+    }),
   },
   components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          backgroundImage: 'none',
+          backgroundColor: mode === 'light' ? '#f5f5f5' : '#121212',
+        },
+      },
+    },
+    MuiTableHead: {
+      styleOverrides: {
+        root: {
+          backgroundColor: mode === 'light' ? '#f0f0f0' : '#2a2a2a',
+        },
+      },
+    },
     MuiStepLabel: {
       styleOverrides: {
         label: {
-          color: mode === 'light' ? '#666' : '#aaa',
-          '&.Mui-active': {
-            color: '#1976d2',
-            fontWeight: 600,
-          },
-          '&.Mui-completed': {
-            color: mode === 'light' ? '#333' : '#fff',
-          },
+          color: mode === 'light' ? '#333333' : '#ffffff',
         },
       },
     },
