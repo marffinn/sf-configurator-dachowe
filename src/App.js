@@ -63,9 +63,8 @@ function DisclaimerStep({ onAccept }) {
         Ważna informacja
       </Typography>
       <Typography variant="body1" sx={{ mb: 4, color: 'text.secondary', lineHeight: 1.6 }}>
-        Niniejszy konfigurator (LDTK 2025) służy do doboru długości tulei tworzywowej oraz łącznika metalowego dla dachu płaskiego.
-        <br /><br />
-        Wyniki mają charakter orientacyjny. W celu precyzyjnego doboru łączników na dachu ze spadkami niezbędne jest wykonanie szczegółowego projektu technicznego.
+        Niniejszy konfigurator określa długość połączenia dla dachu na którym zastosowana ma być określona grubość docieplenia, w celu doboru łączników na dachu ze spadkami, niezbędne jest wykonanie projektu zakotwienia, w tym celu prosimy o kontakt z pod nr telefonu 77 472 62 65 wew. 204 lub pod adresem mailowym  projekty@starfix.eu
+        <br /><br />W celu określenia dokładnej grubości istniejących warstw nienośnych na dachu podlegającemu renowacji docieplenia, niezbędne jest wykonanie odkrywki istniejącej warstwy nienośnej celem określenia jej grubości .
       </Typography>
       <FormControlLabel
         control={<Checkbox checked={accepted} onChange={(e) => setAccepted(e.target.checked)} />}
