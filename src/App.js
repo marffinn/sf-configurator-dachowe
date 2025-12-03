@@ -169,8 +169,31 @@ function App() {
       anchorDepth: isMetal ? 14 : 30
     };
 
-    setRecommendations([result]);
-    sendEmail([result]);
+    const newRecommendations = [result];
+    setRecommendations(newRecommendations);
+    sendEmail(newRecommendations);
+
+    // === START: SEND TO WORDPRESS ===
+    try {
+      const payload = {
+        source: 'ldtk', // IDENTIFIER FOR THIS APP
+        substrate: roofType === 'concrete' ? 'Betonowy' : 'Stalowy',
+        insulation_type: 'Dach', // Generic label for this app
+        hD: parseInt(newThickness),
+        // We map "Old Layers" to "adhesive_thickness" column to reuse DB structure
+        adhesive_thickness: parseInt(totalOld),
+        recessed_depth: 0,
+        recommendations: newRecommendations.map(r => ({ name: r.tubeName, screw: r.screwName })),
+        email: email
+      };
+
+      window.parent.postMessage({ type: 'SF_STATS', payload: payload }, '*');
+      console.log('LDTK Stats sent:', payload);
+    } catch (e) {
+      console.error('Failed to send stats:', e);
+    }
+    // === END: SEND TO WORDPRESS ===
+
     setStep(prev => prev + 1);
   };
 
