@@ -63,8 +63,14 @@ function DisclaimerStep({ onAccept }) {
         Ważna informacja
       </Typography>
       <Typography variant="body1" sx={{ mb: 4, color: 'text.secondary', lineHeight: 1.6 }}>
-        Niniejszy konfigurator określa długość połączenia dla dachu na którym zastosowana ma być określona grubość docieplenia, w celu doboru łączników na dachu ze spadkami, niezbędne jest wykonanie projektu zakotwienia, w tym celu prosimy o kontakt z pod nr telefonu 77 472 62 65 wew. 204 lub pod adresem mailowym  projekty@starfix.eu
-        <br /><br />W celu określenia dokładnej grubości istniejących warstw nienośnych na dachu podlegającemu renowacji docieplenia, niezbędne jest wykonanie odkrywki istniejącej warstwy nienośnej celem określenia jej grubości .
+        Niniejszy konfigurator określa długość połączenia dla dachu na którym zastosowana ma być określona grubość docieplenia,
+        w celu doboru łączników na dachu ze spadkami, niezbędne jest wykonanie projektu zakotwienia,
+        w tym celu prosimy o kontakt z pod nr telefonu 77 472 62 65 wew. 204 lub pod adresem mailowym  a.stolarek@starfix.eu
+        W celu określenia dokładnej grubości istniejących warstw nienośnych na dachu podlegającemu renowacji docieplenia, niezbędne jest
+        wykonanie odkrywki istniejącej warstwy nienośnej celem określenia jej grubości .<br /><br />
+
+        Konfigurator to narzędzie pozwalające w prosty sposób, teoretycznie dobrać długość i typ łącznika dla podanych parametrów.
+        Powstały wynik jest wyłącznie rekomendacją i nie zastępuje projektu technicznego oraz wymagań KOT i ETA dla podanych łączników.
       </Typography>
       <FormControlLabel
         control={<Checkbox checked={accepted} onChange={(e) => setAccepted(e.target.checked)} />}
@@ -138,7 +144,7 @@ function App() {
   const validateStep = (currentStep) => {
     const newErrors = {};
     if (currentStep === 0 && !formData.roofType) newErrors.roofType = 'Wybierz rodzaj dachu';
-    if (currentStep === 1 && formData.newThickness <= 40) newErrors.newThickness = 'Grubość izolacji musi być większa niż 40mm';
+    if (currentStep === 1 && formData.newThickness <= 40) newErrors.newThickness = 'Grubość izolacji nie może być mniejsza niż 50 mm';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
