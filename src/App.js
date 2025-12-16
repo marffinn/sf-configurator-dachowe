@@ -67,7 +67,7 @@ function DisclaimerStep({ onAccept }) {
       <Typography variant="body1" sx={{ mb: 4, color: 'text.secondary', lineHeight: 1.6 }}>
         Niniejszy konfigurator określa długość połączenia dla dachu na którym zastosowana ma być określona grubość docieplenia.
         W celu doboru łączników na dachu ze spadkami, niezbędne jest wykonanie projektu zakotwienia.
-        W tym celu prosimy o kontakt z pod nr telefonu 77 472 62 65 wew. 204 lub pod adresem mailowym - projekty@starfix.eu -<br /><br />
+        W tym celu prosimy o kontakt z pod nr telefonu 77 472 62 65 wew. 204 lub pod adresem mailowym <b style={{ color: 'crimson', clear: 'both' }}>projekty@starfix.eu</b><br /><br />
 
         W celu określenia dokładnej grubości istniejących warstw nienośnych na dachu podlegającemu renowacji docieplenia, niezbędne jest
         wykonanie odkrywki istniejącej warstwy nienośnej celem określenia jej grubości.<br /><br />
