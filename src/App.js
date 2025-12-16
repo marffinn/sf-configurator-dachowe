@@ -1,3 +1,4 @@
+// src/App.js
 import React, { useState } from 'react';
 import emailjs from 'emailjs-com';
 import {
@@ -20,7 +21,8 @@ const getTheme = (mode) => createTheme({
   palette: {
     mode,
     ...(mode === 'light' ? {
-      primary: { main: '#dd0000' },
+      primary: { main: '#dd0000' }, // Starfix Red
+      secondary: { main: '#1976d2' }, // Blue for LDTK distinction if needed
       background: { default: '#f5f5f5', paper: '#ffffff' },
       text: { primary: '#333333', secondary: '#555555' },
     } : {
@@ -58,19 +60,21 @@ const getTheme = (mode) => createTheme({
 function DisclaimerStep({ onAccept }) {
   const [accepted, setAccepted] = useState(false);
   return (
-    <Box sx={{ maxWidth: 600, mx: 'auto', p: 4, textAlign: 'center' }}>
+    <Box sx={{ maxWidth: 660, mx: 'auto', p: 4, textAlign: 'center' }}>
       <Typography variant="h5" gutterBottom color="primary" sx={{ fontWeight: 600 }}>
         Ważna informacja
       </Typography>
       <Typography variant="body1" sx={{ mb: 4, color: 'text.secondary', lineHeight: 1.6 }}>
-        Niniejszy konfigurator określa długość połączenia dla dachu na którym zastosowana ma być określona grubość docieplenia,
-        w celu doboru łączników na dachu ze spadkami, niezbędne jest wykonanie projektu zakotwienia,
-        w tym celu prosimy o kontakt z pod nr telefonu 77 472 62 65 wew. 204 lub pod adresem mailowym  a.stolarek@starfix.eu
+        Niniejszy konfigurator określa długość połączenia dla dachu na którym zastosowana ma być określona grubość docieplenia.
+        W celu doboru łączników na dachu ze spadkami, niezbędne jest wykonanie projektu zakotwienia.
+        W tym celu prosimy o kontakt z pod nr telefonu 77 472 62 65 wew. 204 lub pod adresem mailowym - projekty@starfix.eu -<br /><br />
+
         W celu określenia dokładnej grubości istniejących warstw nienośnych na dachu podlegającemu renowacji docieplenia, niezbędne jest
-        wykonanie odkrywki istniejącej warstwy nienośnej celem określenia jej grubości .<br /><br />
+        wykonanie odkrywki istniejącej warstwy nienośnej celem określenia jej grubości.<br /><br />
 
         Konfigurator to narzędzie pozwalające w prosty sposób, teoretycznie dobrać długość i typ łącznika dla podanych parametrów.
-        Powstały wynik jest wyłącznie rekomendacją i nie zastępuje projektu technicznego oraz wymagań KOT i ETA dla podanych łączników.
+        Powstały wynik jest wyłącznie rekomendacją i nie zastępuje projektu technicznego oraz wymagań KOT i ETA dla podanych łączników. <br /><br />
+        <div style={{ color: '#dd0000', fontWeight: 'bold' }}>Ważne: Rekomendacje doboru łączników dokonywane przez niniejszy konfigurator dotyczą wyłącznie łączników marki STARFIX.</div>
       </Typography>
       <FormControlLabel
         control={<Checkbox checked={accepted} onChange={(e) => setAccepted(e.target.checked)} />}
@@ -177,16 +181,17 @@ function App() {
 
     const newRecommendations = [result];
     setRecommendations(newRecommendations);
+
+    // Send the email with the new styled template
     sendEmail(newRecommendations);
 
     // === START: SEND TO WORDPRESS ===
     try {
       const payload = {
-        source: 'ldtk', // IDENTIFIER FOR THIS APP
+        source: 'ldtk',
         substrate: roofType === 'concrete' ? 'Betonowy' : 'Stalowy',
-        insulation_type: 'Dach', // Generic label for this app
+        insulation_type: 'Dach',
         hD: parseInt(newThickness),
-        // We map "Old Layers" to "adhesive_thickness" column to reuse DB structure
         adhesive_thickness: parseInt(totalOld),
         recessed_depth: 0,
         recommendations: newRecommendations.map(r => ({ name: r.tubeName, screw: r.screwName })),
@@ -194,7 +199,6 @@ function App() {
       };
 
       window.parent.postMessage({ type: 'SF_STATS', payload: payload }, '*');
-      console.log('LDTK Stats sent:', payload);
     } catch (e) {
       console.error('Failed to send stats:', e);
     }
@@ -208,29 +212,63 @@ function App() {
     const res = results[0];
     const totalOld = (formData.roofType === 'metal' || !formData.hasOldInsulation) ? 0 : formData.oldThickness;
 
-    const htmlContent = `
-      <div style="font-family: Arial, sans-serif; color: #333;">
-        <h3 style="color: #1976d2;">Wynik Konfiguracji LDTK 2025</h3>
-        <ul style="line-height: 1.6;">
-          <li><strong>Rodzaj dachu:</strong> ${formData.roofType === 'concrete' ? 'Betonowy' : 'Stalowy'}</li>
-          <li><strong>Nowa izolacja:</strong> ${formData.newThickness} mm</li>
-          <li><strong>Stare warstwy:</strong> ${totalOld} mm</li>
+    // 1. Generate HTML Table for the results
+    const recommendationsHtml = `
+      <table width="100%" style="border-collapse: collapse; font-family: Arial, sans-serif;">
+        <thead>
+          <tr style="background-color: #f8f9fa;">
+            <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Tuleja</th>
+            <th style="border: 1px solid #ddd; padding: 10px; text-align: left; color: #d32f2f;">Wkręt</th>
+            <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Głębokość kotwienia</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 12px; font-weight: bold; font-size: 16px;">${res.tubeName}</td>
+            <td style="border: 1px solid #ddd; padding: 12px; font-weight: bold; color: #d32f2f; font-size: 16px;">${res.screwName}</td>
+            <td style="border: 1px solid #ddd; padding: 12px; text-align: center;">${res.anchorDepth} mm</td>
+          </tr>
+        </tbody>
+      </table>
+    `;
+
+    // 2. Generate Disclaimer HTML (Matching the style of your other app)
+    const disclaimerHtml = `
+      <div style="background-color: #e8f5e9; padding: 15px; border-radius: 4px; margin-bottom: 20px; border: 1px solid #c8e6c9;">
+        <h4 style="margin: 0 0 10px 0; color: #2e7d32; font-family: Arial, sans-serif;">Potwierdzenie zapoznania się z warunkami korzystania</h4>
+        <p style="margin: 0; font-size: 14px; color: #1b5e20; font-family: Arial, sans-serif;">Użytkownik potwierdził, że zapoznał się z następującymi warunkami:</p>
+        <ul style="margin: 5px 0 0 0; padding-left: 20px; font-size: 13px; color: #333; font-family: Arial, sans-serif;">
+          <li>Konfigurator ma charakter wyłącznie orientacyjny i teoretyczny</li>
+          <li>Wynik jest jedynie rekomendacją i nie zastępuje projektu technicznego</li>
+          <li>Wymagana jest weryfikacja przez specjalistę zgodnie z KOT i ETA</li>
         </ul>
-        <div style="background-color: #e3f2fd; padding: 20px; border-left: 5px solid #1976d2; margin-top: 20px;">
-          <h2 style="margin: 0; color: #1565c0;">${res.tubeName}</h2>
-          <h3 style="margin: 10px 0 0 0; color: #d32f2f;">+ ${res.screwName}</h3>
-        </div>
       </div>
     `;
 
+    // 3. Timestamp
+    const timestamp = new Date().toLocaleString('pl-PL', {
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit'
+    });
+
+    // 4. Map to EmailJS Template
     const templateParams = {
       to_email: email,
-      recommendations_html: htmlContent,
-      substrate: formData.roofType,
-      insulationThickness: formData.newThickness,
+      client_email: email,
+
+      // Variable Fields
+      roofType: formData.roofType === 'concrete' ? 'Betonowy' : 'Stalowy',
+      newThickness: formData.newThickness,
+      oldLayers: totalOld > 0 ? `${totalOld} mm` : 'Brak / Nie dotyczy',
+
+      // HTML Blocks
+      recommendations_html: recommendationsHtml,
+      disclaimer_html: disclaimerHtml,
+      timestamp: timestamp
     };
 
-    emailjs.send('service_wl8dg9a', 'template_jgv00kz', templateParams, 'ndfOyBTYvqBjOwsI_')
+    emailjs.send('service_wl8dg9a', 'template_7lxbqqx', templateParams, 'ndfOyBTYvqBjOwsI_')
+      .then(() => console.log('Email Sent Successfully'))
       .catch(err => console.error('Email failed', err));
   };
 
@@ -258,7 +296,7 @@ function App() {
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         bgcolor: (active || completed) ? 'primary.main' : 'grey.300',
         color: 'white',
-        boxShadow: active ? '0 0 0 4px rgba(25, 118, 210, 0.2)' : 'none',
+        boxShadow: active ? '0 0 0 4px rgba(221, 0, 0, 0.2)' : 'none', // Changed shadow to red to match Starfix
         transition: 'all 0.3s ease'
       }}>
         {icon}
